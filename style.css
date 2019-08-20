@@ -1,0 +1,19 @@
+html, body {
+  display: block;
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  font-family: 'Lexend Deca', sans-serif;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+}
+
+#app {
+  display: block;
+  position: relative;
+  top: 0;
+  height:100%;
+  width: 100%;
+  }
