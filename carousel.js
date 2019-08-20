@@ -76,6 +76,8 @@ class Carousel {
 
   computeSeekbarPosition() {
     this.progressSeekbarData['seekbarWidth'] = this.progressbarData['width'] / this.carouselCards.length;
+    const prevX1 = this.progressSeekbarData['x1'];
+    const prevX2 = this.progressSeekbarData['x2'];
     this.progressSeekbarData['x1'] = (this.currentSlide - 1) * this.progressSeekbarData['seekbarWidth'];
     this.progressSeekbarData['x2'] = this.currentSlide * this.progressSeekbarData['seekbarWidth']; 
     this.progressbar = this.carouselWrapper.querySelector('.progress-bar');
