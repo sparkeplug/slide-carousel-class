@@ -7,6 +7,15 @@ class Carousel {
     this.carouselCardsLength = 0;
     this.carouselData = [];
     this.navigators = null;
+    this.progressbar = null;
+    this.progressbarData = {
+      width: 200
+    }
+    this.progressSeekbarData = {
+      x1: 0,
+      x2: 0,
+      width: 0
+    };
     this.data = {
       prev: {},
       current: {},
@@ -20,13 +29,19 @@ class Carousel {
     this.nextAnimation = (e) => {
       this.navigateSlide('next');
     };
-    this.__init__();
+    this.init();
   }
 
-  __init__() {
+  init() {
     this.ripCarouselSlideData();
     this.appendTextNavigators();
     this.appendSeekBar();
+    this.recompute();
+  }
+
+  recompute() {
+    this.computePrevCurrentNextData();
+    this.computeSeekbarPosition();
   }
 
   navigateSlide(mode) {
@@ -44,7 +59,7 @@ class Carousel {
     carouselCard.forEach(card => {
       card.style.transform = `translateX(-${100 * (this.currentSlide - 1)}%)`;
     });
-    this.computePrevCurrentNextData();
+    this.recompute();
   }
 
   computePrevCurrentNextData() {
@@ -57,7 +72,16 @@ class Carousel {
       elem.querySelector('.header').innerText = this['data'][d].header;
       elem.querySelector('.sub-header').innerText = this['data'][d].subHeader;
     });
+  }
 
+  computeSeekbarPosition() {
+    this.progressSeekbarData['seekbarWidth'] = this.progressbarData['width'] / this.carouselCards.length;
+    this.progressSeekbarData['x1'] = (this.currentSlide - 1) * this.progressSeekbarData['seekbarWidth'];
+    this.progressSeekbarData['x2'] = this.currentSlide * this.progressSeekbarData['seekbarWidth']; 
+    this.progressbar = this.carouselWrapper.querySelector('.progress-bar');
+    const seekbar = this.progressbar.querySelector('.seek-bar');
+    seekbar.setAttribute('x1',this.progressSeekbarData['x1']);
+    seekbar.setAttribute('x2',this.progressSeekbarData['x2']);
   }
 
   appendTextNavigators() {
@@ -79,12 +103,21 @@ class Carousel {
     bar.className.baseVal = "progress-bar";
     bar.setAttribute('height','100');
     bar.setAttribute('width','200');
-    let line = document.createElementNS('http://www.w3.org/2000/svg','line');
-    line.setAttribute('x1','0');
-    line.setAttribute('y1','50');
-    line.setAttribute('x2','200');
-    line.setAttribute('y2','50');
-    bar.append(line);
+    let progressBackground = document.createElementNS('http://www.w3.org/2000/svg','line');
+    progressBackground.setAttribute('x1','0');
+    progressBackground.setAttribute('y1','50');
+    progressBackground.setAttribute('x2','200');
+    progressBackground.setAttribute('y2','50');
+    progressBackground.setAttribute('stroke','white');
+    let progress = document.createElementNS('http://www.w3.org/2000/svg','line');
+    progress.className.baseVal = "seek-bar";
+    progress.setAttribute('x1','0');
+    progress.setAttribute('y1','50');
+    progress.setAttribute('x2','50');
+    progress.setAttribute('y2','50');
+    progress.setAttribute('stroke','rgb(255, 80, 0)');
+    bar.append(progressBackground);
+    bar.append(progress);
     this.carouselWrapper.appendChild(bar);
   }
 
