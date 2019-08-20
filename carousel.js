@@ -85,7 +85,6 @@ class Carousel {
     line.setAttribute('x2','200');
     line.setAttribute('y2','50');
     bar.append(line);
-    console.log(bar);
     this.carouselWrapper.appendChild(bar);
   }
 
