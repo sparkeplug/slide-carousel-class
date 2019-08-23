@@ -146,10 +146,9 @@
       width:100%;
       background-color: rgb(255, 80, 0);    
       transform: translateX(0%);
-    }
-    &--loading {
-      transition : transform 5s ease-in-out; 
-      transform : translateX(-100%);
+      &--loading {
+        animation : loader-transition 5s ease-in-out infinite; 
+      }
     }
   }
   .progress-bar {
@@ -180,53 +179,12 @@
   } 
 }
 
-@keyframes ease-in-z-plane {
+@keyframes loader-transition {
   0% {
-    opacity: 0.5;
-    transform: scale(0.9);
+    transform: translateX(0%);
   }
   100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes left-to-right-fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(100%);
-  }
-}
-
-@keyframes right-to-left-fade-out {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
     transform: translateX(-100%);
   }
 }
 
-@keyframes left-to-right-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(100%);
-  }
-}
-
-@keyframes right-to-left-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-100%);
-  }
-}

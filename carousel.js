@@ -7,15 +7,8 @@ class Carousel {
     this.carouselCardsLength = 0;
     this.carouselData = [];
     this.navigators = null;
-    this.loaderData = {};
-    this.progressbar = null;
-    this.progressbarData = {
-      width: 200
-    }
-    this.progressSeekbarData = {
-      x1: 0,
-      x2: 0,
-      width: 0
+    this.loaderData = {
+      element : null
     };
     this.data = {
       prev: {},
@@ -25,10 +18,10 @@ class Carousel {
     this.dataTypes = ['prev','current', 'next'];
     this.carouselCardsLength = this.carouselCards.length;
     this.prevAnimation = (e) => {
-      this.navigateSlide('prev');
+      this.navigateSlide('prev',e);
     };
     this.nextAnimation = (e) => {
-      this.navigateSlide('next');
+      this.navigateSlide('next',e);
     };
     this.init();
   }
@@ -36,22 +29,21 @@ class Carousel {
   init() {
     this.ripCarouselSlideData();
     this.appendTextNavigators();
-    // this.appendSeekBar();
     this.appendLoader();
     this.recompute();
-    this.deployAnimationTimer();
   }
 
   recompute() {
     this.computePrevCurrentNextData();
-    // this.computeSeekbarPosition();
   }
 
-  startLoaderAnimation() {
-    this.loaderData['element'];
-  }
-
-  navigateSlide(mode) {
+  navigateSlide(mode,event) {
+    if(event && event.type === 'click') {
+      debugger; 
+      this.loaderData['element'].classList.remove("loader-bar--loading");
+      this.loaderData['element'].offsetWidth;
+      this.loaderData['element'].classList.add("loader-bar--loading");
+    }
     this.dataTypes.forEach(d => {
       const elem = this.navigators.querySelector(`.${d}`);
       const animationClassToAdd = mode === 'prev' ? 'animate--right' : 'animate--left';
@@ -107,46 +99,25 @@ class Carousel {
     this.computePrevCurrentNextData();
   }
 
-  // appendSeekBar() {
-  //   let bar = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  //   bar.className.baseVal = "progress-bar";
-  //   bar.setAttribute('height','100');
-  //   bar.setAttribute('width','200');
-  //   let progressBackground = document.createElementNS('http://www.w3.org/2000/svg','line');
-  //   progressBackground.setAttribute('x1','0');
-  //   progressBackground.setAttribute('y1','50');
-  //   progressBackground.setAttribute('x2','200');
-  //   progressBackground.setAttribute('y2','50');
-  //   progressBackground.setAttribute('stroke','white');
-  //   let progress = document.createElementNS('http://www.w3.org/2000/svg','line');
-  //   progress.className.baseVal = "seek-bar";
-  //   progress.setAttribute('x1','0');
-  //   progress.setAttribute('y1','50');
-  //   progress.setAttribute('x2','50');
-  //   progress.setAttribute('y2','50');
-  //   progress.setAttribute('stroke','rgb(255, 80, 0)');
-  //   bar.append(progressBackground);
-  //   bar.append(progress);
-  //   this.carouselWrapper.appendChild(bar);
-  // }
-
   appendLoader() {
     let loaderContainer = document.createElement('div');
     loaderContainer.className = "loader";
     let loaderBar = document.createElement('span');
-    loaderBar.className = "loader-bar";
-    loaderBar.addEventListener('animationstart',this.loaderAnimationStarted);
-    loaderBar.addEventListener('animationend',this.loaderAnimationEnded);
+    loaderBar.className = "loader-bar loader-bar--loading";
+    loaderBar.addEventListener('animationiteration',this.loaderAnimationIteration.bind(this));
     loaderContainer.appendChild(loaderBar);
     this.carouselWrapper.appendChild(loaderContainer);
     this.loaderData['element'] = this.carouselWrapper.querySelector('.loader').querySelector('.loader-bar');
   }
 
-  loaderAnimationStarted(e) {
-    console.log('STARTED -> ',e);
+  loaderAnimationIteration(e) {
+    this.navigateSlide('next');
   }
-  loaderAnimationEnded() {
-    console.log('ENDED -> ',e);
+
+  pauseLoaderAnimation(e) {
+    const animationState = e.type === "mouseenter" ? 'paused' : 'running';
+    this.loaderData['element'].style.animationPlayState = animationState;
+    this.loaderData['element'].style.webkitAnimationPlayState = animationState;
   }
 
   createHeaders(id) {
@@ -160,6 +131,8 @@ class Carousel {
     if(id === 'prev' || id === 'next') {
       let divWrapper = document.createElement('div');
       divWrapper.className = `wrapper ${id}-wrapper`;
+      divWrapper.addEventListener('mouseenter',this.pauseLoaderAnimation.bind(this),false);
+      divWrapper.addEventListener('mouseleave',this.pauseLoaderAnimation.bind(this),false);
       if(id === 'prev') {
         div.addEventListener('click',this.prevAnimation,false);
       } else if(id ==='next') {
@@ -186,10 +159,6 @@ class Carousel {
         subHeader
       });
     });
-  }
-
-  addRemoveNavigatorAnimations(mode,direction) {
-    // this.navigators.forEach();
   }
 }
 
